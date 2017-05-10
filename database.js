@@ -1,4 +1,5 @@
 var mongoose = require('mongoose');
+var utils = require('./utils.js');
 
 
 mongoose.connect('mongodb://localhost/servertest')
@@ -11,22 +12,23 @@ mongoose.connection.once('open', function() {
 });
 
 
-function sameKeys(obj1, obj2) {
-  return JSON.stringify(Object.keys(obj1).sort())
-      == JSON.stringify(Object.keys(obj2).sort());
-}
-
-
 var playerDefinition = {
-  name: String
+  /* mongoose adds _id here */
+  name: String,
+  email: String,
+  settings: {
+    language: String,
+    difficulty: Number
+  },
+  score: Number
 };
 var Player = mongoose.model('Player', mongoose.Schema(playerDefinition));
 
 
-function addPlayer(playerInfo, doneCallback) {
-  if (!sameKeys(playerDefinition, playerInfo)) {
+exports.addPlayer = function(playerInfo, doneCallback) {
+  if (!utils.sameKeys(playerDefinition, playerInfo)) {
     doneCallback("players need to have these keys: "
-                 + Object.keys(playerSchema));
+                 + Object.keys(playerDefinition));
     return;
   }
 
@@ -41,16 +43,21 @@ function addPlayer(playerInfo, doneCallback) {
 }
 
 
-function getPlayer(id, doneCallback) {
+exports.getPlayer = function(id, doneCallback) {
   Player.findById(id, function(err, player) {
     if (err) {
       doneCallback(err, null);
       return;
     }
+    if (player == null) {
+      doneCallback("player not found", null);
+      return;
+    }
 
-    // the player has a __v key here for some reason
+    /* the player has a __v key here for some reason, other mongoose
+       versions might put other weird keys there too */
     var result = { };
-    keys = Object.keys(playerDefinition);
+    var keys = Object.keys(playerDefinition);
     for (var i = 0; i < keys.length; i++) {
       result[keys[i]] = player[keys[i]];
     }
@@ -59,5 +66,20 @@ function getPlayer(id, doneCallback) {
 }
 
 
-module.exports.addPlayer = addPlayer;
-module.exports.getPlayer = getPlayer;
+exports.deletePlayer = function(id, doneCallback) {
+  Player.remove({ _id: id }, function(error, writeOpResult) {
+    if (!error && writeOpResult.result.n == 0) {
+      doneCallback("player not found");
+    } else {
+      doneCallback(null);
+    }
+  });
+}
+
+
+exports.updatePlayerInfo = function(id, newInfo, doneCallback) {
+  Player.update({_id: id}, newInfo, function(err, rawResponse) {
+    console.log("******** " + rawResponse);
+    doneCallback(err);
+  });
+}
