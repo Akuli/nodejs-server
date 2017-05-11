@@ -2,7 +2,7 @@ var mongoose = require('mongoose');
 var utils = require('./utils.js');
 
 
-mongoose.connect('mongodb://localhost/servertest')
+mongoose.connect('mongodb://localhost/players')
 mongoose.connection.on('error', function(msg) {
   console.error("cannot connect the database: " + msg);
   process.exit(1);
@@ -70,7 +70,7 @@ exports.deletePlayer = function(id, doneCallback) {
     if (!error && writeOpResult.result.n == 0) {
       doneCallback("player not found");
     } else {
-      doneCallback(null);
+      doneCallback(error);
     }
   });
 }
