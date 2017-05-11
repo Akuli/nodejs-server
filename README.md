@@ -56,12 +56,18 @@ there's already another package with an executable called `node`.
 ## Tests
 
 Currently `tests.py` contains quick and dirty tests written in Python.
-You can install all of the dependencies and run the tests like this:
+You can install all of the dependencies that the tests need like this:
 
 ```
 $ python3 -m pip install --user pytest requests
-$ python3 -m pytest
 ```
 
 Use `py -3` instead of `python3` on Windows and omit `--user` if you are
 using a virtualenv.
+
+Now you can start the server in another terminal or command prompt, and
+run the tests like this:
+
+```
+$ python3 -m pytest
+```
