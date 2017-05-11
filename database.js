@@ -57,10 +57,9 @@ exports.getPlayer = function(id, doneCallback) {
     /* the player has a __v key here for some reason, other mongoose
        versions might put other weird keys there too */
     var result = { };
-    var keys = Object.keys(playerDefinition);
-    for (var i = 0; i < keys.length; i++) {
-      result[keys[i]] = player[keys[i]];
-    }
+    Object.keys(playerDefinition).forEach(function(key) {
+      result[key] = player[key];
+    });
     doneCallback(null, result);
   });
 }
@@ -92,17 +91,16 @@ exports.updatePlayerInfo = function(id, info, doneCallback) {
       return;
     }
 
-    for (var i = 0; i < keys.length; i++) {
+    keys.forEach(function(key) {
       // TODO: add support for [] objects later if needed
-      var key = keys[i];
       if (typeof oldInfo[key] == 'object') {
         newInfo[key] = {};
-        utils.update(newInfo[key], oldInfo[key]);
-        utils.update(newInfo[key], info[key]);
+        utils.mappingUpdate(newInfo[key], oldInfo[key]);
+        utils.mappingUpdate(newInfo[key], info[key]);
       } else {
         newInfo[key] = info[key];
       }
-    }
+    });
 
     Player.update({_id: id}, newInfo, function(err, rawResponse) {
       doneCallback(err);
