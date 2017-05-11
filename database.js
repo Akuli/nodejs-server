@@ -77,9 +77,35 @@ exports.deletePlayer = function(id, doneCallback) {
 }
 
 
-exports.updatePlayerInfo = function(id, newInfo, doneCallback) {
-  Player.update({_id: id}, newInfo, function(err, rawResponse) {
-    console.log("******** " + rawResponse);
-    doneCallback(err);
+exports.updatePlayerInfo = function(id, info, doneCallback) {
+  var newInfo = {}
+  var keys = Object.keys(info);
+
+  exports.getPlayer(id, function(err, oldInfo) {
+    if (err) {
+      doneCallback(err);
+      return;
+    }
+
+    if (oldInfo == null) {
+      doneCallback("player not found");
+      return;
+    }
+
+    for (var i = 0; i < keys.length; i++) {
+      // TODO: add support for [] objects later if needed
+      var key = keys[i];
+      if (typeof oldInfo[key] == 'object') {
+        newInfo[key] = {};
+        utils.update(newInfo[key], oldInfo[key]);
+        utils.update(newInfo[key], info[key]);
+      } else {
+        newInfo[key] = info[key];
+      }
+    }
+
+    Player.update({_id: id}, newInfo, function(err, rawResponse) {
+      doneCallback(err);
+    });
   });
 }

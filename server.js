@@ -27,7 +27,7 @@ function handleRequest(request, response) {
 
   function error(message) {
     // TODO: use different status codes instead of always using 200 or 400?
-    console.error(message.toString());
+    console.error("sending error response: " + message.toString());
     response.writeHead(400);    // 400 means bad request
     response.end(message.toString());
   }
