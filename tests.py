@@ -1,21 +1,11 @@
-# quick and dirty tests in python
-#
-# you can install everything required to run the tests like this...
-#   $ python3 -m pip instal --user requests pytest
-# ...and then run the tests like this, with the server running:
-#   $ python3 -m pytest
-
-from collections import ChainMap as merge_dicts
 import copy
-import json
-
-import pytest
 import requests
+
 
 # change this to use a different host or port
 URL = 'http://localhost:9999/api/player/'
 
-default_player =  {
+default_player = {
     "name": "Test Player",
     "email": "test.player@example.com",
     "settings": {
@@ -28,6 +18,7 @@ default_player =  {
 
 def succeeds(response):
     return response.status_code == 200
+
 
 def fails(response):
     return response.status_code == 400
