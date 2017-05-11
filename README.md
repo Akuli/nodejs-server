@@ -33,7 +33,7 @@ The HTTP status code is always 200 on success and 400 on failure.
 ## Installing the server
 
 Make sure that you have Node.js, NPM and MongoDB installed. For example,
-you can installed them like this on Debian-based Linux distributions:
+you can install them like this on Debian-based Linux distributions:
 
 ```
 $ sudo apt install mongodb nodejs npm
